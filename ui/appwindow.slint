@@ -1,8 +1,9 @@
-import { Button, VerticalBox } from "std-widgets.slint";
+import { Button, VerticalBox, HorizontalBox, LineEdit } from "std-widgets.slint";
 
 export component AppWindow inherits Window {
     in-out property<int> counter: 42;
     callback request-increase-value();
+    
     VerticalBox {
         Text {
             text: "Counter: \{root.counter}";
@@ -16,4 +17,31 @@ export component AppWindow inherits Window {
     }
 }
 
+export component AppWindow2 inherits Window {
+    in-out property<int> counter: 42;
+    callback request-increase-value2();
+    HorizontalBox { // Use HorizontalBox for better layout
+      Text {
+        text: "Counter: \{root.counter}";
+      }
+  
+      LineEdit { // Add the text field
+        text: "\{root.counter}"; // Initial empty text
+      }
+  
+      Button { // Modify the "Increase value" button
+        text: "Increase by:"; // Clarify button action
+        clicked => {
+          root.request-increase-value2();
+        }
+      }
+  
+      Button { // Add the "Confirm" button
+        text: "Confirm";
+        clicked => {
+          // Perform actions based on user confirmation (e.g., call another method)
+        }
+      }
+    }
+  }
 
