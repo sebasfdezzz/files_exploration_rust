@@ -1,4 +1,4 @@
-import { Button, VerticalBox, HorizontalBox, LineEdit } from "std-widgets.slint";
+import { Button, VerticalBox, HorizontalBox, LineEdit, StandardListView} from "std-widgets.slint";
 
 export component AppWindow inherits Window {
     in-out property<int> counter: 42;
@@ -19,27 +19,47 @@ export component AppWindow inherits Window {
 
 export component AppWindow2 inherits Window {
     in-out property<int> counter: 42;
+    in-out property<string> options: "sda1,sda2,sdb";
+    in-out property<[string]> data: [];
     callback request-increase-value2();
-    HorizontalBox { // Use HorizontalBox for better layout
-      Text {
-        text: "Counter: \{root.counter}";
-      }
-  
-      LineEdit { // Add the text field
-        text: "\{root.counter}"; // Initial empty text
-      }
-  
-      Button { // Modify the "Increase value" button
-        text: "Increase by:"; // Clarify button action
-        clicked => {
-          root.request-increase-value2();
+    callback recover_jpgs();
+    callback recover_pngs();
+    callback set_disk(int);
+    callback get_disks_ui();
+
+    HorizontalBox {
+      VerticalBox {
+        Button {
+          text: "Get Disks";
+          clicked => {
+            root.get_disks_ui();
+          }
         }
+        StandardListView {
+          width: 150px;
+          height: 50px;
+          model: [{text: "sda"}, {text:"sdb"},{text:"ram"},{text:"loop1"},];
+          current-item-changed(item) => {
+            root.set_disk(item);
+          }
+            // let options_vec = root.options.split(',').map(|s| s.to_string()).collect::<Vec<String>>();
+            // // Map each string to a StandardListViewItem with text property
+            // options_vec.iter().map(|option| StandardListViewItem { text: option.clone() }).collect::<Vec<StandardListViewItem>>()
+          
       }
-  
-      Button { // Add the "Confirm" button
-        text: "Confirm";
-        clicked => {
-          // Perform actions based on user confirmation (e.g., call another method)
+      }
+      VerticalBox {
+        Button {
+          text: "Recover JPGs";
+          clicked => {
+            root.recover_jpgs();
+          }
+        }
+        Button {
+          text: "Recover PNGs";
+          clicked => {
+            root.recover_pngs();
+          }
         }
       }
     }

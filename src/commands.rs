@@ -16,12 +16,23 @@ pub mod commands {
         Ok(String::from_utf8_lossy(&lsblk_output.stdout).into_owned())
     }
     
-    fn recover_files(disks: &[String], filetypes: &[String], folder_destino: &str) -> Result<Output, std::io::Error> {
-        Command::new("photorec")
-                .args(disks)
-                .args(filetypes)
-                .arg(folder_destino)
-                .output()
+    pub fn recover_files(disk: &str, filetype: &str, folder_destino: &str) -> Result<Output, std::io::Error> {
+        let mut command = Command::new("photorec");
+        
+        // Add common options
+        command.arg("/log").arg("/d").arg(folder_destino).arg("/cmd");
+        
+        // Add disk-specific option
+        let disk_option = format!("/dev/{}", disk);
+        command.arg(disk_option);
+        
+        // Add file types
+        // for filetype in filetypes {
+            let option = format!("fileopt,everything,disable,{},enable,search", filetype);
+            command.arg(option);
+        // }
+        
+        command.output()
     }
     
     fn list_files(path: &str) -> Result<Output, std::io::Error> {
