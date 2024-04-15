@@ -34,20 +34,23 @@ fn main() -> Result<(), slint::PlatformError> {
         //         eprintln!("Error: {}", err);
         //     }
         // }
-        match recover_files(disk, "jpg", folder_destino) {
-            Ok(output) => println!("Output of recover_files: {:?}", output),
-            Err(err) => eprintln!("Error recovering files: {:?}", err),
-        }
+        // match recover_files(disk, "jpg", folder_destino) {
+        //     Ok(output) => println!("Output of recover_files: {:?}", output),
+        //     Err(err) => eprintln!("Error recovering files: {:?}", err),
+        // }
+        recover_files(disk, "jpg", folder_destino);
     
     }
     });
 
     ui.on_recover_pngs({
         move ||{println!("png");
-        match recover_files(disk, "png", folder_destino) {
-            Ok(output) => println!("Output of recover_files: {:?}", output),
-            Err(err) => eprintln!("Error recovering files: {:?}", err),
-        }}
+        // match recover_files(disk, "png", folder_destino) {
+        //     Ok(output) => println!("Output of recover_files: {:?}", output),
+        //     Err(err) => eprintln!("Error recovering files: {:?}", err),
+        // }
+        recover_files(disk, "png", folder_destino);
+    }
         
     });
 

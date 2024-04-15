@@ -1,5 +1,5 @@
 pub mod commands {
-    use std::process::{Command, Output};
+    use std::process::{Command, Output, Stdio};
 
     pub fn get_disks() -> Result<String, std::io::Error> {
         let lsblk_output = Command::new("lsblk")
@@ -16,23 +16,26 @@ pub mod commands {
         Ok(String::from_utf8_lossy(&lsblk_output.stdout).into_owned())
     }
     
-    pub fn recover_files(disk: &str, filetype: &str, folder_destino: &str) -> Result<Output, std::io::Error> {
+    pub fn recover_files(disk: &str, filetype: &str, folder_destino: &str) {
         let mut command = Command::new("photorec");
-        
+    
         // Add common options
         command.arg("/log").arg("/d").arg(folder_destino).arg("/cmd");
-        
+    
         // Add disk-specific option
         let disk_option = format!("/dev/{}", disk);
         command.arg(disk_option);
-        
+    
         // Add file types
-        // for filetype in filetypes {
-            let option = format!("fileopt,everything,disable,{},enable,search", filetype);
-            command.arg(option);
-        // }
-        
-        command.output()
+        let option = format!("fileopt,everything,disable,{},enable,search", filetype);
+        command.arg(option);
+    
+        // Spawn the command in the background
+        command.stdin(Stdio::null())
+               .stdout(Stdio::null())
+               .stderr(Stdio::null())
+               .spawn()
+               .expect("Failed to execute command");
     }
     
     fn list_files(path: &str) -> Result<Output, std::io::Error> {
