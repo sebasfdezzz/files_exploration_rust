@@ -66,33 +66,25 @@ fn main() -> Result<(), slint::PlatformError> {
 }
 
 fn read_disk(disk_name: &str) -> io::Result<usize> {
-    // Open the disk as a file
     let mut disk_file = File::open(&("/dev/".to_string() + disk_name))?;
 
-    // Read the entire disk into a buffer
     let mut buffer = Vec::new();
     disk_file.read_to_end(&mut buffer)?;
 
-    // JPEG magic numbers
     let jpeg_magic_numbers: [u8; 3] = [0xFF, 0xD8, 0xFF];
 
-    // Iterate through the buffer searching for JPEG magic numbers
     let mut file_count = 0;
     let mut start_index = 0;
     while let Some(mut index) = buffer[start_index..].windows(3).position(|window| window == jpeg_magic_numbers) {
-        // Offset index to start of JPEG
         index += start_index;
-        // Find the end of the JPEG
         let mut end_index = index;
         while end_index + 1 < buffer.len() && !(buffer[end_index] == 0xFF && buffer[end_index + 1] == 0xD9) {
             end_index += 1;
         }
-        // Save JPEG file
         let jpeg_data = &buffer[index..=end_index];
         let mut file = File::create(format!("jpg_file_{}.jpg", file_count))?;
         file.write_all(jpeg_data)?;
 
-        // Increment file count and move start_index to the byte following the JPEG end marker
         file_count += 1;
         start_index = end_index + 2;
     }
